@@ -7,6 +7,8 @@ import br.edu.ifs.web1.serivces.perfil.dto.PerfilDTO;
 import br.edu.ifs.web1.serivces.perfil.form.PerfilForm;
 import br.edu.ifs.web1.serivces.usuario.UsuarioService;
 import br.edu.ifs.web1.serivces.usuario.impl.UsuarioServiceImpl;
+import br.edu.ifs.web1.exception.ResourceNotFoundException;
+import br.edu.ifs.web1.serivces.i18n.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.List;
 public class PerfilServiceImpl implements PerfilService {
     @Autowired
     private PerfilRepository perfilRepository;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public PerfilDTO cadastrar(PerfilForm form) {
@@ -49,7 +53,9 @@ public class PerfilServiceImpl implements PerfilService {
 
     @Override
     public PerfilDTO getById(Long id) {
-        return toDTO(perfilRepository.findById(id).orElseThrow());
+        return toDTO(perfilRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("erro.perfil.naoencontrado", id))));
     }
 
     static private PerfilDTO toDTO(PerfilEntidade entidade) {

@@ -1,5 +1,6 @@
 package br.edu.ifs.web1.serivces.perfil.form;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,12 +12,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Dados para cadastro de um novo perfil")
 public class PerfilForm {
 
-    @NotBlank(message = "O nome é obrigatório")
-    @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
+    @NotBlank(message = "{perfil.nome.obrigatorio}")
+    @Size(min = 2, max = 100, message = "{perfil.nome.size}")
+    @Schema(description = "Nome do perfil de acesso", example = "ADMIN")
     private String nome;
 
-    @Size(max = 1, message = "O status deve ter no máximo 1 caractere")
+    @Size(max = 1, message = "{perfil.status.size}")
+    @Schema(description = "Status do perfil (ex: A para Ativo, I para Inativo)", example = "A", defaultValue = "A")
     private String status;
 }

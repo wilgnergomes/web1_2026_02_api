@@ -9,6 +9,8 @@ import br.edu.ifs.web1.serivces.perfil.impl.PerfilServiceImpl;
 import br.edu.ifs.web1.serivces.usuario.UsuarioService;
 import br.edu.ifs.web1.serivces.usuario.dto.UsuarioDTO;
 import br.edu.ifs.web1.serivces.usuario.form.UsuarioForm;
+import br.edu.ifs.web1.exception.ResourceNotFoundException;
+import br.edu.ifs.web1.serivces.i18n.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,10 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
-    @Autowired PerfilService perfilService;
+    @Autowired 
+    private PerfilService perfilService;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public UsuarioDTO cadastrar(UsuarioForm usu) {
@@ -29,6 +34,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .login(usu.getLogin())
                 .senha(usu.getSenha())
                 .cadastro(new Date())
+                .perfis(new ArrayList<>())
                 .build()));
     }
 
@@ -74,7 +80,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDTO getById(Long id) {
-        return toDTO(usuarioRepository.findById(id).orElseThrow());
+        return toDTO(usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("erro.usuario.naoencontrado", id))));
     }
 
     static private UsuarioDTO toDTO(UsuarioEntidade entidade) {
